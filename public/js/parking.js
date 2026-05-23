@@ -1,7 +1,39 @@
 window.onload = () => {
     
+    const button = document.querySelector("#load-button");
 }
 
+button.onclick = loadRecordsFetch;
+function loadRecordsAxios() {
+
+}
+async function loadRecordsFetch() {
+try {
+    const uri = "http://localhost:8001/api/fake/campus/parkingSpots";
+    const config = { method: "get"};
+
+    const response = await fetch(uri, config);
+    if (!response.ok) return showError(response.statusText, response.status);
+    else hideError();
+
+const records = await response.json();
+showRecords(records);
+
+} catch (err) {
+    console.log(err);
+    console.log("Network Failure");
+}
+}
+function showRecords(records) {
+document.querySelector("#records")
+recordsArea.innerHTML = ""; //remove all content in the panel
+
+//add the records to the panel
+for (const record of records.data) {
+const html = getParkingSpotCard(record);
+recordsArea.innerHTML += html;
+}
+}
 function readFormEntries() {
     return {
         lot: document.querySelector("#lot-input").value,
