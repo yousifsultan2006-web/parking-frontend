@@ -1,12 +1,66 @@
 window.onload = () => {
     
     const button = document.querySelector("#load-button");
+    //button.onclick = loadRecordsAxios;
+    button.onclick = loadRecordsFetch;
+    const form = document.querySelector("#parking-form");
+    form.onsubmit = handleFormAxios;
 }
 
-button.onclick = loadRecordsFetch;
-function loadRecordsAxios() {
+
+
+
+async function handleFormFetch() {
+event.preventDefault(); //stop page refresh
+try {
+    const inputs = readFormEntries();
+    const uri = "http://localhost:8001/api/fake/campus/parkingSpots";
+    const config = {
+        method: "post",
+        headers: {
+            "Content-Type": "applicaiton/json"
+        },
+        body: JSON.stringify(inputs)
+       
+    }
+    const response = await fetch(uri, config)
+     if(response.ok) {
+            await loadRecordsFetch();
+        }
+} catch (err) {
+    console.log(err);
+}
 
 }
+
+async function handleFormAxios() {
+event.preventDefault();
+
+try {
+const inputs = readFormEntries();
+const uri = "http://localhost:8001/api/fake/campus/parkingSpots";
+const response = await axios.post(uri, input);
+
+//reload data on the page
+await loadRecordsAxios();
+} catch (err) {
+    showError(err.message, err.status);
+}
+}
+async function loadRecordsAxios() {
+try {
+    const uri = "http://localhost:8001/api/fake/campus/parkingSpots?status=500";
+    const response = await axios.get(uri);
+
+    hideError();
+    showRecords(response.data);
+
+} catch (err) {
+    showError(err.status, err.message);
+}
+
+}
+
 async function loadRecordsFetch() {
 try {
     const uri = "http://localhost:8001/api/fake/campus/parkingSpots";
